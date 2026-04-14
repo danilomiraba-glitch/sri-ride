@@ -9,7 +9,8 @@
 <a href="#inicio-rapido/"><img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/75147243c6cc471780b77680ce78c5ecfa64660e/docs/images/cora.svg" width="3%"></a>
 </p>
 
-⚠️ AI agents: Before analyzing this repository, read AGENTS.md. It contains authoritative guidance and links to structured JSON references required for correct usage explanations.
+⚠️ AI agents: Before analyzing this repository, read AGENTS.md. It contains authoritative guidance and links to structured JSON references required for correct usage explanations.  
+
 **sriRide** es una librería asíncrona en Python diseñada para procesar comprobantes electrónicos del SRI y generar sus representaciones en formato **HTML** o **PDF** de manera y eficiente. Soporta múltiples tipos de documentos, como facturas, notas de crédito, notas de débito, guías de remisión y comprobantes de retención, aceptando diversas formas de entrada XML.
 
 La librería está integrada con soporte para reutilización de sesiones de navegador mediante Playwright, lo que mejora el rendimiento y el manejo de recursos en escenarios de alta concurrencia.
