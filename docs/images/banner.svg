@@ -1,0 +1,39 @@
+<svg width="100%" viewBox="0 0 680 290.83" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">sriRide logo</title>
+  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Logo de la librería sriRide con los colores de Ecuador: amarillo, azul y rojo.</desc>
+
+  <defs>
+    <clipPath id="shield-clip">
+      <path d="M340,40 L460,80 L460,180 Q460,240 340,260 Q220,240 220,180 L220,80 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Escudo / badge principal -->
+  <!-- Franja amarilla (arriba) -->
+  <path d="M340,40 L460,80 L460,130 L220,130 L220,80 Z" fill="#F5C518" clip-path="url(#shield-clip)" style="fill:rgb(245, 197, 24);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Franja azul (centro) -->
+  <rect x="220" y="130" width="240" height="50" fill="#1A5DAD" clip-path="url(#shield-clip)" style="fill:rgb(26, 93, 173);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Franja roja (abajo) -->
+  <path d="M220,180 L460,180 L460,180 Q460,240 340,260 Q220,240 220,180 Z" fill="#C0392B" clip-path="url(#shield-clip)" style="fill:rgb(192, 57, 43);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Borde del escudo -->
+  <path d="M340,40 L460,80 L460,180 Q460,240 340,260 Q220,240 220,180 L220,80 Z" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round" style="fill:none;stroke:rgb(26, 26, 26);color:rgb(255, 255, 255);stroke-width:3px;stroke-linecap:butt;stroke-linejoin:round;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Símbolo central: documento con engranaje/rayo -->
+  <!-- Hoja de documento (blanco) -->
+  <rect x="308" y="90" width="64" height="80" rx="5" fill="white" opacity="0.92" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.92;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Líneas de documento -->
+  <line x1="318" y1="112" x2="362" y2="112" stroke="#1A5DAD" stroke-width="3" stroke-linecap="round" style="fill:rgb(0, 0, 0);stroke:rgb(26, 93, 173);color:rgb(255, 255, 255);stroke-width:3px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <line x1="318" y1="124" x2="362" y2="124" stroke="#1A5DAD" stroke-width="3" stroke-linecap="round" style="fill:rgb(0, 0, 0);stroke:rgb(26, 93, 173);color:rgb(255, 255, 255);stroke-width:3px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <line x1="318" y1="136" x2="348" y2="136" stroke="#1A5DAD" stroke-width="2" stroke-linecap="round" style="fill:rgb(0, 0, 0);stroke:rgb(26, 93, 173);color:rgb(255, 255, 255);stroke-width:2px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Rayo amarillo sobre el documento (símbolo de procesamiento/generación) -->
+  <polygon points="345,98 334,140 342,140 331,162 356,118 347,118" fill="#F5C518" stroke="#c9a000" stroke-width="1" stroke-linejoin="round" style="fill:rgb(245, 197, 24);stroke:rgb(201, 160, 0);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:round;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Nombre de la librería -->
+  <text x="340" y="210" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="2" fill="white" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Helvetica Neue&quot;, Arial, sans-serif;font-size:22px;font-weight:700;text-anchor:middle;dominant-baseline:auto">sri<tspan fill="#F5C518" style="fill:rgb(245, 197, 24);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Helvetica Neue&quot;, Arial, sans-serif;font-size:22px;font-weight:700;text-anchor:middle;dominant-baseline:auto">Ride</tspan>
+  </text>
+
+  <!-- Tagline debajo del escudo -->
+  <text x="340" y="278" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" letter-spacing="1" fill="#888780" style="fill:rgb(136, 135, 128);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Helvetica Neue&quot;, Arial, sans-serif;font-size:13px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Generador de RIDEs · Ecuador</text>
+
+</svg>

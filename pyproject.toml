@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sri-ride"
+version = "0.1.2"
+description = "Libreria para construir contexto y renderizar RIDE SRI (HTML/PDF)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "danilomiraba" }
+]
+dependencies = [
+  "lxml>=6.0.2",
+  "jinja2>=3.1.6",
+  "playwright>=1.58.0",
+  "python-barcode>=0.16.1",
+  "pypdf>=6.9.2",
+  "Pillow>=12.1.1",
+  "cairosvg>=2.9.0"
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=9.0.3"
+]
+
+[project.scripts]
+sri-ride = "sriRide.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sriRide = [
+  "*.json",
+  "*.txt",
+  "template/**/*.html",
+  "template/**/*.woff2",
+  "template/**/*.ttf"
+]

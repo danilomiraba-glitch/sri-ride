@@ -1,0 +1,49 @@
+```
+sri-ride 0.1.0
+Renderizar comprobantes XML SRI a HTML o PDF.
+
+USO:
+  sri-ride render [opciones]
+
+SUBCOMANDOS:
+  render        Procesa un comprobante SRI y genera salida HTML o PDF.
+
+OPCIONES (render):
+  --doc <tipo>              Tipo de comprobante a renderizar. (requerido)
+                            Valores:
+                              factura
+                              guia_remision | guiaremision
+                              nota_credito  | notacredito
+                              nota_debito   | notadebito
+                              retencion
+
+  --xml <ruta|xml>          Ruta a archivo XML o XML inline. (requerido)
+
+  --mode <formato>          Formato de salida. (opcional)
+                            Valores: html, pdf
+                            Default: html
+
+  --logo <ruta>             Ruta de logo opcional (png, svg).
+
+  --out <destino>           Destino de salida. (requerido)
+                            - HTML: carpeta de salida
+                            - PDF: archivo .pdf
+
+REGLAS:
+  * Debe usarse un subcomando válido (ej: render).
+  * --doc, --xml y --out son obligatorios.
+  * En modo html, --out debe ser carpeta.
+  * En modo pdf, --out debe ser archivo .pdf.
+  * Si --xml no es ruta válida, se interpreta como XML inline.
+
+EJEMPLOS:
+  sri-ride render --doc factura --xml factura.xml --out salidas/factura.pdf --mode pdf
+
+  sri-ride render --doc factura --xml factura.xml --out salidas/html_partes
+
+  sri-ride render --doc guia_remision --xml guia.xml --mode pdf --logo logo.svg --out salida.pdf
+
+ERRORES:
+  exit code 2  -> argumentos inválidos
+  exit code 1  -> error en ejecución
+```
