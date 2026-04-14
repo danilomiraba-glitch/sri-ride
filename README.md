@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="docs/images/banner.svg" width="65%">
+  <img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/75147243c6cc471780b77680ce78c5ecfa64660e/docs/images/banner.svg" width="65%">
 </p>
 
 <p align="center">
 <a href="https://docs.python.org/3/"><img src="https://img.shields.io/badge/Python-3.x-blue?logo=python" /></a>
 <a href="./LICENSE"><img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" /></a>
-<a href="#inicio-rapido/"><img src="docs/images/ecubanner.svg"></a>
-<a href="#inicio-rapido/"><img src="docs/images/cora.svg" width="3%"></a>
+<a href="#inicio-rapido/"><img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/75147243c6cc471780b77680ce78c5ecfa64660e/docs/images/ecubanner.svg"></a>
+<a href="#inicio-rapido/"><img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/75147243c6cc471780b77680ce78c5ecfa64660e/docs/images/cora.svg" width="3%"></a>
 </p>
 
 
@@ -16,7 +16,7 @@ La librería está integrada con soporte para reutilización de sesiones de nave
 Ejemplo de Salida de factura mostrando estructura con datos ficticios 
 
 <p align="center">
-  <img src="docs/images/factura.png" alt="Ejemplo de factura" width="30%" />
+  <img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/refs/heads/main/docs/images/factura.png" alt="Ejemplo de factura" width="30%" />
 </p>
 <p align="center">
   <em>Ejemplo de render de factura con datos ficticios. La información mostrada es únicamente demostrativa y puede contener inconsistencias (p. ej., combinaciones tributarias no válidas en la práctica).</em>
@@ -134,7 +134,7 @@ partes = await ride.factura(xml="factura.xml")
 html_para_web = "".join([p['html'] for p in partes])
 # return Response(content=html_para_web, media_type="text/html")
 ```
-<img src="docs/images/html_mode.svg" width="40%">
+<img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/75147243c6cc471780b77680ce78c5ecfa64660e/docs/images/html_mode.svg" width="40%">
 
 ### Manejo de Salida en Modo PDF
 
@@ -208,7 +208,7 @@ ride = SriRide(mode='pdf', page_provider=pool)
 # La librería solicita una página, renderiza y la libera automáticamente
 pdf_b64 = await ride.factura(xml_input)
 ```
-<img src="docs/images/pdf_mode.svg" width="40%">
+<img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/75147243c6cc471780b77680ce78c5ecfa64660e/docs/images/pdf_mode.svg" width="40%">
 
 # 🖥️ CLI
 
@@ -265,7 +265,7 @@ ERRORES:
   exit code 2  -> argumentos inválidos
   exit code 1  -> error en ejecución
 ```
-<img src="docs/images/cli_map.svg" width="40%">
+<img src="https://raw.githubusercontent.com/danilomiraba-glitch/sri-ride/75147243c6cc471780b77680ce78c5ecfa64660e/docs/images/cli_map.svg" width="40%">
 
 # ℹ️ Estado del proyecto
 
