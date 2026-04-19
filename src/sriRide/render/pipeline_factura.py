@@ -20,11 +20,6 @@ from .html_renderer import (
 )
 from .pdf_renderer import render_pdf_desde_html
 
-try:
-    from src.sriRide.contexto_sri_router import construir_contexto_sri_autorizado_async
-except ModuleNotFoundError:  # Compatibilidad cuando PYTHONPATH=src
-    from sriRide.contexto_sri_router import construir_contexto_sri_autorizado_async
-
 
 ANEXO_TEMPLATE_BY_CODIGO = {
     "guiaRemision": "anexo_remision.html",
@@ -67,7 +62,9 @@ async def render_html_desde_xml_sri(
     template_name: str | None = None,
     logo_input: str | bytes | Path | None = None,
 ) -> RenderHtmlSriResultado:
-    contexto, pre = await construir_contexto_sri_autorizado_async(xml_input)
+    from sriRide.contexto_sri_router import construir_contexto_sri_autorizado_async
+
+    contexto, barcode_b64, pre = await construir_contexto_sri_autorizado_async(xml_input)
 
     if tipo_esperado is not None and pre.tipo_comprobante != tipo_esperado:
         raise ValueError(
@@ -76,7 +73,7 @@ async def render_html_desde_xml_sri(
 
     if logo_input is not None:
         try:
-            from src.sriRide.preproceso import procesar_logo_para_plantilla
+            from sriRide.preproceso import procesar_logo_para_plantilla
         except ModuleNotFoundError:  # Compatibilidad cuando PYTHONPATH=src
             from sriRide.preproceso import procesar_logo_para_plantilla
 
@@ -87,6 +84,7 @@ async def render_html_desde_xml_sri(
     tpl_dir, tpl_name = _resolver_template(pre.tipo_comprobante, template_dir, template_name)
     partes_html = _render_html_partes(
         contexto=contexto,
+        barcode_b64=barcode_b64 or "",
         tipo_comprobante=pre.tipo_comprobante,
         template_dir=tpl_dir,
         template_name=tpl_name,
@@ -164,12 +162,18 @@ def _resolver_template(
 def _render_html_partes(
     *,
     contexto: dict[str, Any],
+    barcode_b64: str,
     tipo_comprobante: str,
     template_dir: Path,
     template_name: str,
 ) -> list[RenderHtmlParte]:
     if tipo_comprobante != "factura":
-        html = render_html(contexto, template_dir=template_dir, template_name=template_name)
+        html = render_html(
+            contexto,
+            barcode_b64,
+            template_dir=template_dir,
+            template_name=template_name,
+        )
         return [
             RenderHtmlParte(
                 clave="principal",
@@ -194,6 +198,7 @@ def _render_html_partes(
     contexto_principal["anexos_total"] = total_anexos
     html_principal = render_html(
         contexto_principal,
+        barcode_b64,
         template_dir=template_dir,
         template_name=template_name,
     )
@@ -227,6 +232,7 @@ def _render_html_partes(
         contexto_anexo["anexos_total"] = total_anexos
         html_anexo = render_html(
             contexto_anexo,
+            barcode_b64,
             template_dir=template_dir,
             template_name=template_anexo,
         )

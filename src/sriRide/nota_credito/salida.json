@@ -1,0 +1,168 @@
+{
+  "infoTributaria": {
+    "ambiente": "1",
+    "tipoEmision": "1",
+    "razonSocial": "razonSocial0",
+    "nombreComercial": "nombreComercial0",
+    "ruc": "0000000000001",
+    "claveAcceso": "0000000000000000000000000000000000000000000000000",
+    "codDoc": "00",
+    "estab": "000",
+    "ptoEmi": "000",
+    "secuencial": "000000000",
+    "dirMatriz": "dirMatriz0",
+    "agenteRetencion": "0",
+    "contribuyenteRimpe": "CONTRIBUYENTE RÉGIMEN RIMPE"
+  },
+  "infoNotaCredito": {
+    "fechaEmision": "01/01/2000",
+    "dirEstablecimiento": "dirEstablecimiento0",
+    "tipoIdentificacionComprador": "04",
+    "razonSocialComprador": "razonSocialComprador0",
+    "identificacionComprador": "identificacionCompra",
+    "contribuyenteEspecial": "contribuyente",
+    "obligadoContabilidad": "SI",
+    "rise": "rise0",
+    "codDocModificado": "00",
+    "numDocModificado": "000-000-000000000",
+    "fechaEmisionDocSustento": "01/01/2000",
+    "totalSinImpuestos": "50.00",
+    "compensaciones": {
+      "compensacion": [
+        {
+          "codigo": "1",
+          "tarifa": "49.50",
+          "valor": "50.00"
+        },
+        {
+          "codigo": "1",
+          "tarifa": "49.50",
+          "valor": "50.00"
+        }
+      ]
+    },
+    "valorModificacion": "50.00",
+    "moneda": "moneda0",
+    "totalConImpuestos": {
+      "totalImpuesto": [
+        {
+          "codigo": "2",
+          "codigoPorcentaje": "0",
+          "baseImponible": "50.00",
+          "valor": "50.00",
+          "valorDevolucionIva": "50.00"
+        },
+        {
+          "codigo": "2",
+          "codigoPorcentaje": "0",
+          "baseImponible": "50.00",
+          "valor": "50.00",
+          "valorDevolucionIva": "50.00"
+        }
+      ]
+    },
+    "motivo": "motivo0"
+  },
+  "detalles": {
+    "detalle": [
+      {
+        "codigoInterno": "codigoInterno0",
+        "codigoAdicional": "codigoAdicional0",
+        "descripcion": "descripcion0",
+        "cantidad": "50.000000",
+        "precioUnitario": "50.000000",
+        "descuento": "50.00",
+        "precioTotalSinImpuesto": "50.00",
+        "detallesAdicionales": {
+          "detAdicional": [
+            {
+              "nombre": "nombre0",
+              "valor": "valor0"
+            },
+            {
+              "nombre": "nombre1",
+              "valor": "valor1"
+            }
+          ]
+        },
+        "impuestos": {
+          "impuesto": [
+            {
+              "codigo": "2",
+              "codigoPorcentaje": "0",
+              "tarifa": "49.50",
+              "baseImponible": "50.00",
+              "valor": "50.00"
+            },
+            {
+              "codigo": "2",
+              "codigoPorcentaje": "0",
+              "tarifa": "49.50",
+              "baseImponible": "50.00",
+              "valor": "50.00"
+            }
+          ]
+        }
+      },
+      {
+        "codigoInterno": "codigoInterno1",
+        "codigoAdicional": "codigoAdicional1",
+        "descripcion": "descripcion1",
+        "cantidad": "50.000000",
+        "precioUnitario": "50.000000",
+        "descuento": "50.00",
+        "precioTotalSinImpuesto": "50.00",
+        "detallesAdicionales": {
+          "detAdicional": [
+            {
+              "nombre": "nombre2",
+              "valor": "valor2"
+            },
+            {
+              "nombre": "nombre3",
+              "valor": "valor3"
+            }
+          ]
+        },
+        "impuestos": {
+          "impuesto": [
+            {
+              "codigo": "2",
+              "codigoPorcentaje": "0",
+              "tarifa": "49.50",
+              "baseImponible": "50.00",
+              "valor": "50.00"
+            },
+            {
+              "codigo": "2",
+              "codigoPorcentaje": "0",
+              "tarifa": "49.50",
+              "baseImponible": "50.00",
+              "valor": "50.00"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "maquinaFiscal": {
+    "marca": "marca0",
+    "modelo": "modelo0",
+    "serie": "serie0"
+  },
+  "infoAdicional": {
+    "campoAdicional": [
+      {
+        "value": "campoAdicional0",
+        "nombre": "nombre4"
+      },
+      {
+        "value": "campoAdicional1",
+        "nombre": "nombre5"
+      }
+    ]
+  },
+  "Signature": null,
+  "id": "comprobante",
+  "version": "version0"
+}

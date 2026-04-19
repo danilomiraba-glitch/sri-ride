@@ -5,31 +5,31 @@ from .cliente import construir_cliente_contexto
 from .doc import construir_doc_contexto
 from .emisor import construir_emisor_contexto
 from .exportador import construir_exportador_contexto
+from .normalizer import normalizar_factura
 from .producto import construir_producto_contexto
 from .reembolso import construir_reembolso_contexto
 from .repetibles import construir_info_adicional_contexto, construir_pago_contexto
 from .remision import construir_destino_contexto, construir_remision_contexto
 from .totales import construir_totales_contexto
-from .xml_utils import XmlInput, load_xml_root, walk_path_nodes
 
 
-def construir_contexto_desde_xml(xml_input: XmlInput) -> dict:
+def construir_contexto_desde_xml(factura_obj) -> dict:
     """
-    Punto de entrada llamable para pipeline externo.
-    Orquesta módulos y condiciones de activación desde el índice.
+    Punto de entrada llamable para pipeline externo con objeto Factura (xsdata).
+    Normaliza en una sola pasada y luego arma el contexto para Jinja2.
     """
-    factura_root = load_xml_root(xml_input)
+    normalizado = normalizar_factura(factura_obj)
 
-    remision_activa = _exists_path(factura_root, "factura.infoSustitutivaGuiaRemision")
-    exportador_activo = _exists_path(factura_root, "factura.infoFactura.comercioExterior")
-    reembolso_activo = _exists_path(factura_root, "factura.infoFactura.codDocReembolso")
+    remision_activa = normalizado["flags"]["remision_activa"]
+    exportador_activo = normalizado["flags"]["exportador_activo"]
+    reembolso_activo = normalizado["flags"]["reembolso_activo"]
 
-    remision_ctx = construir_remision_contexto(factura_root) if remision_activa else None
-    destino_ctx = construir_destino_contexto(factura_root) if remision_activa else {"items": []}
-    exportador_ctx = construir_exportador_contexto(factura_root) if exportador_activo else None
-    reembolso_ctx = construir_reembolso_contexto(factura_root) if reembolso_activo else {"items": []}
+    remision_ctx = construir_remision_contexto(normalizado) if remision_activa else None
+    destino_ctx = construir_destino_contexto(normalizado) if remision_activa else {"items": []}
+    exportador_ctx = construir_exportador_contexto(normalizado) if exportador_activo else None
+    reembolso_ctx = construir_reembolso_contexto(normalizado) if reembolso_activo else {"items": []}
 
-    producto_ctx = construir_producto_contexto(factura_root)
+    producto_ctx = construir_producto_contexto(normalizado)
     producto_items = producto_ctx.get("items", [])
     page_size = "A4" if len(producto_items) >= 10 else "auto"
 
@@ -43,26 +43,22 @@ def construir_contexto_desde_xml(xml_input: XmlInput) -> dict:
     )
 
     return {
-        "doc": construir_doc_contexto(factura_root),
-        "emisor": construir_emisor_contexto(factura_root),
-        "cliente": construir_cliente_contexto(factura_root),
+        "doc": construir_doc_contexto(normalizado),
+        "emisor": construir_emisor_contexto(normalizado),
+        "cliente": construir_cliente_contexto(normalizado),
         "producto": producto_ctx,
         "layout": {
             "page_size": page_size,
         },
-        "pago": construir_pago_contexto(factura_root),
+        "pago": construir_pago_contexto(normalizado),
         "anexos": anexos_ctx,
-        "info_adicional": construir_info_adicional_contexto(factura_root),
-        "totales": construir_totales_contexto(factura_root),
+        "info_adicional": construir_info_adicional_contexto(normalizado),
+        "totales": construir_totales_contexto(normalizado),
         "remision": remision_ctx,
         "destino": destino_ctx,
         "exportador": exportador_ctx,
         "reembolso": reembolso_ctx,
     }
-
-
-def _exists_path(factura_root, dot_path: str) -> bool:
-    return bool(walk_path_nodes(factura_root, dot_path))
 
 
 def _gastos_exportacion_items(exportador_ctx: dict | None) -> list[dict]:

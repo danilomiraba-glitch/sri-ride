@@ -3,9 +3,11 @@ from .comprobante import construir_comprobante_contexto
 from .doc import construir_doc_contexto
 from .emisor import construir_emisor_contexto
 from .index import construir_contexto_desde_xml
+from .normalizer import normalizar_nota_debito
 from .producto import construir_producto_contexto
 from .repetibles import construir_info_adicional_contexto, construir_pago_contexto
 from .totales import construir_totales_contexto
+from .xml_utils import XmlInput
 
 __all__ = [
     "construir_contexto_desde_xml",
@@ -17,4 +19,6 @@ __all__ = [
     "construir_info_adicional_contexto",
     "construir_totales_contexto",
     "construir_comprobante_contexto",
+    "normalizar_nota_debito",
+    "XmlInput",
 ]

@@ -1,23 +1,14 @@
 from __future__ import annotations
 
-from lxml import etree
+from typing import Any
 
-from ..core.xml_utils import (
-    XmlInput,
-    extract_document_root,
-    first_text,
-    first_text_from,
-    join_values,
-    local_name,
-    load_any_xml_root,
-    walk_path_nodes,
-    walk_relative_nodes,
-)
+# Alias de compatibilidad con código externo que todavía importe XmlInput.
+XmlInput = Any
 
 
-def load_xml_root(xml_input: XmlInput) -> etree._Element:
-    """Carga XML desde texto/bytes/path/elemento y devuelve la raiz util."""
-    root = load_any_xml_root(xml_input)
-    factura = extract_document_root(root, root_tag="factura")
-    return factura if factura is not None else root
-
+def load_xml_root(xml_input: XmlInput) -> XmlInput:
+    """
+    Compatibilidad temporal.
+    En la ruta de baja latencia se espera que `xml_input` ya sea el objeto Factura.
+    """
+    return xml_input

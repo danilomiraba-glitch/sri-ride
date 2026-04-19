@@ -42,12 +42,6 @@ async def render_layout_to_pdf_bytes(
     margin_bottom: str = "0mm",
     margin_left: str = "0mm",
 ) -> bytes:
-    """
-    Render robusto:
-    - Si cabe en A4 → altura exacta (sin whitespace)
-    - Si no cabe → A4 paginado normal
-    """
-
     await page.emulate_media(media="print")
 
     await page.evaluate(
@@ -105,9 +99,6 @@ async def render_layout_to_pdf_bytes(
 
 
 def merge_pdf_bytes(pdf_parts: list[bytes], output_path: Path) -> None:
-    """
-    Merge puro (sin tocar layout)
-    """
     writer = PdfWriter()
 
     for pdf_part in pdf_parts:

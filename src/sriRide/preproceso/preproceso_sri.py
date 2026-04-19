@@ -3,20 +3,38 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 from datetime import datetime
+from io import BytesIO
 from pathlib import Path
-from typing import Union
+from typing import Any, Union
+from xml.etree import ElementTree as ET
 
-from lxml import etree
+from xsdata.formats.dataclass.parsers import XmlParser
+from xsdata.formats.dataclass.parsers.config import ParserConfig
 
-XmlInput = Union[str, bytes, Path, etree._Element, etree._ElementTree]
+
+from sriRide.dataclass.factura.factura_v2_1_0 import Factura # type: ignore
+from sriRide.dataclass.guia_remision.guia_remision_v1_1_0 import GuiaRemision # type: ignore
+from sriRide.dataclass.nota_credito.nota_credito_v1_1_0 import NotaCredito # type: ignore
+from sriRide.dataclass.nota_debito.nota_debito_v1_0_0 import NotaDebito # type: ignore
+from sriRide.dataclass.retencion.retencion_v2_0_0 import ComprobanteRetencion # type: ignore
+
+XmlInput = Union[str, bytes, Path]
+
 SRI_COMPROBANTE_TAGS = (
     "factura",
     "notaCredito",
     "notaDebito",
     "guiaRemision",
     "comprobanteRetencion",
-    "liquidacionCompra",
 )
+
+DTO_BY_TIPO = {
+    "factura": Factura,
+    "guiaRemision": GuiaRemision,
+    "notaCredito": NotaCredito,
+    "notaDebito": NotaDebito,
+    "comprobanteRetencion": ComprobanteRetencion,
+}
 
 
 @dataclass
@@ -24,61 +42,36 @@ class SriPreprocesoResultado:
     estado: str
     numero_autorizacion: str
     fecha_autorizacion: str
-    xml_legible: str
-    comprobante_root: etree._Element
     tipo_comprobante: str
-    factura_root: etree._Element | None = None
+    comprobante_obj: Any
+    comprobante_xml: str
 
 
 def preprocesar_xml_autorizado_sri(xml_input: XmlInput) -> SriPreprocesoResultado:
     """
-    Flujo de preproceso para XML autorizado SRI:
-    1) Valida estado AUTORIZADO.
-    2) Extrae numero/fecha de autorizacion.
-    3) Obtiene el XML del comprobante desde <comprobante>.
-    4) Formatea fecha a dd/mm/yyyy HH:MM:SS.
-    5) Inyecta nodo de autorizacion dentro del comprobante.
-    6) Retorna XML legible (pretty print) y metadatos.
+    Flujo estricto para XML AUTORIZADO SRI:
+    1) Validar wrapper autorizado.
+    2) Extraer numero/fecha de autorizacion.
+    3) Extraer XML interno desde <comprobante>.
+    4) Parsear DTO segun tipo de comprobante.
     """
-    root = _load_xml_root(xml_input)
+    wrapper_root = _load_xml_root(xml_input)
+    estado, numero_autorizacion, fecha_raw, comprobante_xml = _extraer_campos_wrapper(wrapper_root)
 
-    normalizado = _extraer_comprobante_normalizado(root)
-    if normalizado is not None:
-        return _preproceso_passthrough_comprobante(normalizado)
-
-    estado = _find_text(root, "estado")
     if estado != "AUTORIZADO":
-        raise ValueError("El XML no tiene estado AUTORIZADO.")
+        raise ValueError(f"El XML no tiene estado AUTORIZADO (estado={estado!r}).")
 
-    numero_autorizacion = _require_text(root, "numeroAutorizacion")
-    fecha_original = _require_text(root, "fechaAutorizacion")
-    fecha_formateada = _formatear_fecha_autorizacion(fecha_original)
-
-    comprobante = _require_text(root, "comprobante")
-    comprobante_root = _parse_inner_comprobante(comprobante)
-    tipo_comprobante = _local_name(comprobante_root.tag)
-
-    _inyectar_autorizacion(
-        comprobante_root,
-        numero_autorizacion=numero_autorizacion,
-        fecha_autorizacion=fecha_formateada,
-    )
-
-    xml_legible = etree.tostring(
-        comprobante_root,
-        encoding="utf-8",
-        xml_declaration=True,
-        pretty_print=True,
-    ).decode("utf-8")
+    fecha_autorizacion = _formatear_fecha_autorizacion(fecha_raw)
+    tipo_comprobante = _detectar_tipo_comprobante(comprobante_xml)
+    comprobante_obj = _parsear_dto(comprobante_xml, tipo_comprobante)
 
     return SriPreprocesoResultado(
         estado=estado,
         numero_autorizacion=numero_autorizacion,
-        fecha_autorizacion=fecha_formateada,
-        xml_legible=xml_legible,
-        comprobante_root=comprobante_root,
+        fecha_autorizacion=fecha_autorizacion,
         tipo_comprobante=tipo_comprobante,
-        factura_root=comprobante_root if tipo_comprobante == "factura" else None,
+        comprobante_obj=comprobante_obj,
+        comprobante_xml=comprobante_xml,
     )
 
 
@@ -86,156 +79,87 @@ async def preprocesar_xml_autorizado_sri_async(xml_input: XmlInput) -> SriPrepro
     return await asyncio.to_thread(preprocesar_xml_autorizado_sri, xml_input)
 
 
-def _extraer_comprobante_normalizado(root: etree._Element) -> etree._Element | None:
-    root_name = _local_name(root.tag)
-    if root_name in SRI_COMPROBANTE_TAGS:
-        return root
-
-    wrapper_nodes = root.xpath(".//*[local-name()='comprobante']")
-
-    if wrapper_nodes:
-        return None
-
-    for tag in SRI_COMPROBANTE_TAGS:
-        nodes = root.xpath(f".//*[local-name()='{tag}']")
-        if nodes:
-            return nodes[0]
-    return None
-
-
-def _preproceso_passthrough_comprobante(comprobante_root: etree._Element) -> SriPreprocesoResultado:
-    tipo_comprobante = _local_name(comprobante_root.tag)
-    numero_autorizacion = _extraer_o_default_string_field(
-        comprobante_root,
-        "Numero_autorizacion",
-        default="PRUEBA-SIN-AUTORIZACION",
-    )
-    fecha_autorizacion = _extraer_o_default_string_field(
-        comprobante_root,
-        "Fecha_autorizacion",
-        default=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-    )
-
-    xml_legible = etree.tostring(
-        comprobante_root,
-        encoding="utf-8",
-        xml_declaration=True,
-        pretty_print=True,
-    ).decode("utf-8")
-
-    return SriPreprocesoResultado(
-        estado="DESARROLLO",
-        numero_autorizacion=numero_autorizacion,
-        fecha_autorizacion=fecha_autorizacion,
-        xml_legible=xml_legible,
-        comprobante_root=comprobante_root,
-        tipo_comprobante=tipo_comprobante,
-        factura_root=comprobante_root if tipo_comprobante == "factura" else None,
-    )
-
-
-def _load_xml_root(xml_input: XmlInput) -> etree._Element:
-    if isinstance(xml_input, etree._Element):
-        return xml_input
-    if isinstance(xml_input, etree._ElementTree):
-        return xml_input.getroot()
+def _load_xml_root(xml_input: XmlInput) -> ET.Element:
     if isinstance(xml_input, Path):
-        return etree.parse(str(xml_input)).getroot()
+        return ET.parse(str(xml_input)).getroot()
+
     if isinstance(xml_input, bytes):
-        return etree.fromstring(xml_input)
+        return ET.fromstring(xml_input)
+
     if isinstance(xml_input, str):
         if xml_input.lstrip().startswith("<"):
-            return etree.fromstring(xml_input.encode("utf-8"))
-        return etree.parse(xml_input).getroot()
+            return ET.fromstring(xml_input.encode("utf-8"))
+        return ET.parse(xml_input).getroot()
+
     raise TypeError(f"Tipo de entrada XML no soportado: {type(xml_input)!r}")
 
 
-def _find_text(root: etree._Element, local_tag: str) -> str | None:
-    nodes = root.xpath(f".//*[local-name()='{local_tag}']")
-    for node in nodes:
+def _extraer_campos_wrapper(root: ET.Element) -> tuple[str, str, str, str]:
+    estado: str | None = None
+    numero_autorizacion: str | None = None
+    fecha_autorizacion: str | None = None
+    comprobante_xml: str | None = None
+
+    for node in root.iter():
+        name = _local_name(node.tag)
         text = (node.text or "").strip()
-        if text:
-            return text
-    return None
+        if not text:
+            continue
 
+        if estado is None and name == "estado":
+            estado = text
+        elif numero_autorizacion is None and name == "numeroAutorizacion":
+            numero_autorizacion = text
+        elif fecha_autorizacion is None and name == "fechaAutorizacion":
+            fecha_autorizacion = text
+        elif comprobante_xml is None and name == "comprobante":
+            comprobante_xml = text
 
-def _require_text(root: etree._Element, local_tag: str) -> str:
-    text = _find_text(root, local_tag)
-    if not text:
-        raise ValueError(f"No se encontro valor en <{local_tag}>.")
-    return text
-
-
-def _parse_inner_comprobante(comprobante_text: str) -> etree._Element:
-    payload = comprobante_text.strip()
-    if not payload:
-        raise ValueError("El nodo <comprobante> esta vacio.")
-    try:
-        comprobante_root = etree.fromstring(payload.encode("utf-8"))
-    except etree.XMLSyntaxError as exc:
-        raise ValueError("No se pudo parsear el XML interno de <comprobante>.") from exc
-
-    if _local_name(comprobante_root.tag) in SRI_COMPROBANTE_TAGS:
-        return comprobante_root
-
-    for tag in SRI_COMPROBANTE_TAGS:
-        nodes = comprobante_root.xpath(f".//*[local-name()='{tag}']")
-        if nodes:
-            return nodes[0]
-
-    raise ValueError("El XML interno no contiene un comprobante SRI soportado.")
-
-
-def _inyectar_autorizacion(
-    comprobante_root: etree._Element,
-    *,
-    numero_autorizacion: str,
-    fecha_autorizacion: str,
-) -> None:
-    """
-    Crea/actualiza nodo:
-      comprobante/extensions/extension/StringField[@name='Numero_autorizacion']
-      comprobante/extensions/extension/StringField[@name='Fecha_autorizacion']
-    """
-    extensions = _find_or_create_child(comprobante_root, "extensions")
-    extension = _find_or_create_child(extensions, "extension")
-
-    _set_string_field(extension, "Numero_autorizacion", numero_autorizacion)
-    _set_string_field(extension, "Fecha_autorizacion", fecha_autorizacion)
-
-
-def _set_string_field(extension_node: etree._Element, name: str, value: str) -> None:
-    candidates = extension_node.xpath("./*[local-name()='StringField']")
-    target = None
-    for node in candidates:
-        if (node.get("name") or "").strip() == name:
-            target = node
+        if estado and numero_autorizacion and fecha_autorizacion and comprobante_xml:
             break
 
-    if target is None:
-        target = etree.SubElement(extension_node, "StringField")
-        target.set("name", name)
-    target.text = value
+    if not estado:
+        raise ValueError("No se encontro <estado> en XML autorizado.")
+    if not numero_autorizacion:
+        raise ValueError("No se encontro <numeroAutorizacion> en XML autorizado.")
+    if not fecha_autorizacion:
+        raise ValueError("No se encontro <fechaAutorizacion> en XML autorizado.")
+    if not comprobante_xml:
+        raise ValueError("No se encontro <comprobante> en XML autorizado.")
+
+    return estado, numero_autorizacion, fecha_autorizacion, comprobante_xml
 
 
-def _extraer_o_default_string_field(comprobante_root: etree._Element, name: str, *, default: str) -> str:
-    nodes = comprobante_root.xpath(
-        ".//*[local-name()='extensions']/*[local-name()='extension']/*[local-name()='StringField']"
+def _detectar_tipo_comprobante(comprobante_xml: str) -> str:
+    payload = comprobante_xml.strip()
+    if not payload:
+        raise ValueError("El nodo <comprobante> esta vacio.")
+
+    try:
+        root = ET.fromstring(payload.encode("utf-8"))
+    except ET.ParseError as exc:
+        raise ValueError("No se pudo parsear el XML interno de <comprobante>.") from exc
+
+    tipo = _local_name(root.tag)
+    if tipo in SRI_COMPROBANTE_TAGS:
+        return tipo
+
+    raise ValueError(f"Tipo de comprobante no soportado en wrapper SRI: {tipo!r}.")
+
+
+from xsdata.formats.dataclass.parsers.config import ParserConfig
+
+def _parsear_dto(comprobante_xml: str, tipo_comprobante: str) -> Any:
+    dto_class = DTO_BY_TIPO.get(tipo_comprobante)
+    if dto_class is None:
+        raise NotImplementedError(f"Tipo '{tipo_comprobante}' sin DTO.")
+
+    config = ParserConfig(
+        fail_on_unknown_properties=False,  # nodos extra en XML → ignorar
+        fail_on_unknown_attributes=False,
     )
-    for node in nodes:
-        if (node.get("name") or "").strip() != name:
-            continue
-        value = (node.text or "").strip()
-        if value:
-            return value
-    return default
-
-
-def _find_or_create_child(parent: etree._Element, local_tag: str) -> etree._Element:
-    nodes = parent.xpath(f"./*[local-name()='{local_tag}']")
-    if nodes:
-        return nodes[0]
-    return etree.SubElement(parent, local_tag)
+    parser = XmlParser(config=config)
+    return parser.parse(BytesIO(comprobante_xml.encode("utf-8")), dto_class)
 
 
 def _local_name(tag: str) -> str:
